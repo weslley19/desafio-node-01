@@ -68,7 +68,20 @@ app.post('/todos', checksExistsUserAccount, (request, response) => {
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { user } = request;
+  const { title, deadline } = request.body;
+  const id = request.params.id;
+
+  const todoExists = user.todos.find(todo => todo.id === id);
+
+  if (!todoExists) {
+    return response.status(404).json({ message: 'Todo not found'})
+  }
+
+  todoExists.title = title
+  todoExists.deadline = deadline
+
+  return response.status(200).json(todoExists)
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {

@@ -16,7 +16,7 @@ function checksExistsUserAccount(request, response, next) {
   const user = users.find(user => user.username === username);
 
   if (!user) {
-    return response.status(400).json({ message: 'User not found' });
+    return response.status(404).json({ error: 'User not found' });
   }
 
   request.user = user;
@@ -30,7 +30,7 @@ app.post('/users', (request, response) => {
   const userExists = users.some(user => user.username === username);
 
   if (userExists) {
-    return response.status(400).json({ message: 'User already exists' });
+    return response.status(400).json({ error: 'User already exists' });
   }
 
   const user = {
@@ -75,7 +75,7 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
   const todoExists = user.todos.find(todo => todo.id === id);
 
   if (!todoExists) {
-    return response.status(404).json({ message: 'Todo not found'})
+    return response.status(404).json({ error: 'Todo not found'})
   }
 
   todoExists.title = title
@@ -105,13 +105,13 @@ app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
 
   const todoExists = user.todos.findIndex(todo => todo.id === id);
 
-  if (!todoExists) {
+  if (todoExists === -1) {
     return response.status(404).json({error: 'Todo not found.'});
   }
   
   user.todos.splice(todoExists, 1);
 
-  return response.status(200).json() 
+  return response.status(204).json() 
 }); 
 
 module.exports = app;
